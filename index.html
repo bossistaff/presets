@@ -848,19 +848,43 @@
                 <div class="preset-step" id="step-0"
                     style="z-index: 2; background: var(--bg-dark); padding: 0 10px; color: var(--primary); font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary);">
                     1</div>
+                <div class="preset-step" id="step-1"
+                    style="z-index: 2; background: var(--bg-dark); padding: 0 10px; color: var(--text-dim); font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card-border);">
+                    2</div>
+                <div class="preset-step" id="step-2"
+                    style="z-index: 2; background: var(--bg-dark); padding: 0 10px; color: var(--text-dim); font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card-border);">
+                    3</div>
+                <div class="preset-step" id="step-3"
+                    style="z-index: 2; background: var(--bg-dark); padding: 0 10px; color: var(--text-dim); font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card-border);">
+                    4</div>
+                <div class="preset-step" id="step-4"
+                    style="z-index: 2; background: var(--bg-dark); padding: 0 10px; color: var(--text-dim); font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card-border);">
+                    5</div>
+                <div class="preset-step" id="step-5"
+                    style="z-index: 2; background: var(--bg-dark); padding: 0 10px; color: var(--text-dim); font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card-border);">
+                    6</div>
             </div>
 
             <div class="field-group">
-                <label>Current Preset</label>
-                <div style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.3); color: var(--text-dim); font-family: var(--font-main); font-size: 1rem;">
-                    Trio Victory Ladder preset ready to copy anytime.
-                </div>
+                <label>Current Status</label>
+                <select id="presetSelect"
+                    style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.3); color: var(--text-main); font-family: var(--font-main); outline: none; font-size: 1rem; cursor: pointer; transition: var(--transition);">
+                    <option value="0">Ready to start (Next: LB Preset)</option>
+                    <option value="1">LB Preset (Next: Event preset #2)</option>
+                    <option value="2">Event preset #2 (Next: Patreon Preset #3)</option>
+                    <option value="3">Patreon Preset #3 (Next: Friends Invite Preset #4)</option>
+                    <option value="4">Friends Invite Preset #4 (Next: Noble Solos Preset #5)</option>
+                    <option value="5">Noble Solos Preset #5 (Next: Division 0 Preset #6)</option>
+                    <option value="6">✅ All presets finished</option>
+                </select>
             </div>
 
             <div class="btn-group" style="margin-top: 30px;">
                 <button id="btnNextPreset" class="btn btn-primary" onclick="getNextPreset()"
-                    style="font-size: 1.15rem; padding: 18px; box-shadow: 0 8px 25px rgba(88, 101, 242, 0.4);">📋 Copy
-                    Preset</button>
+                    style="font-size: 1.15rem; padding: 18px; box-shadow: 0 8px 25px rgba(88, 101, 242, 0.4);">🚀 Start
+                    Hosting Now (Game 1)</button>
+                <button class="btn btn-secondary" onclick="resetPresets()" style="flex: 0.3; min-width: 150px;">🔄 Reset
+                    Sequence</button>
             </div>
 
             <div class="output-container" id="presetOutputSection" style="display: none;">
@@ -920,7 +944,8 @@
 
         function saveState() {
             const stateToSave = {
-                activePage: state.activePage
+                activePage: state.activePage,
+                presetIndex: document.getElementById('presetSelect') ? document.getElementById('presetSelect').value : '0'
             };
             localStorage.setItem('admin_ids_state_presets_only', JSON.stringify(stateToSave));
         }
@@ -930,7 +955,13 @@
                 toggleTheme();
             }
             try {
-                JSON.parse(localStorage.getItem('admin_ids_state_presets_only'));
+                const saved = JSON.parse(localStorage.getItem('admin_ids_state_presets_only'));
+                if (saved) {
+                    if (saved.presetIndex !== undefined && document.getElementById('presetSelect')) {
+                        document.getElementById('presetSelect').value = saved.presetIndex;
+                        if (typeof updatePresetHUD === 'function') updatePresetHUD();
+                    }
+                }
             } catch (e) { }
         }
 
@@ -962,39 +993,127 @@
             saveState();
         }
         const presetsList = [
-            `**We're hosting a [Trio Victory Ladder](<https://discord.com/events/854725181384556584/1508840455373328494>) TODAY! 🎉** \n\n- Game Winners = Division 3 Invite <:Noble_Division3:916436931712270448>  *team leader only*\n-# More info: <#1190662048841998396>.\n\nGames will be hosted in https://discord.com/channels/854725181384556584/982970682025578506 with normal Scrim Rules as per <#854739679320473610> <:storm_surge:1315689527142125569> \n\n<:D_Date:1004312174367354942> Start: <t:1779987600:t> \n<:D_Date:1004312174367354942> End: <t:1779998400:t>`
+            ` <:ArrowRight:1398394460941062327> Make sure to download [Yunite Client](<https://yunite.xyz/client>) so your points count on the Leaderboard!\n:attach: <https://nobleprac.com/leaderboards> \n`,
+            `## :trophy: **Scrims Champion Event** :trophy:\n\n**Top 10 players** with the **most scrim wins in May** will earn the exclusive @Scrims Champion role. :crown:\n\n:date: May 1 – May 31, 2026\n\n- Every scrim win counts \n- Ties decided by average placement  :dart: \n\n:point_right: Exclusive role, never obtainable again.`,
+            `Want to qualify to more stacked customs, just like the pros? 🔥\n\nSubscribe to our **Gold **and **Diamond** tiers on Patreon to gain access to Division 3 without needing a top 5 placement. <:Noble_Division3:916436931712270448> \n\n**Gold:** Solos **Top 40** - Duos **Top 20** ✨ \n**Diamond:** Solos **Top 80** - Duos **Top 40** 💎\n\n👉 Find out more information here: https://discord.com/channels/854725181384556584/973206221198872636\n<:link:1444810805018099894> [Patreon.com/NoblePracticeServer](<https://www.patreon.com/NoblePracticeServer>) <:patreon:1108728440833708113>`,
+            `• Make sure to invite your friends over, https://discord.gg/EU \n\n<:ArrowRight:1398394460941062327> All members of your team must be in this server and verified in <#854727051718426625> to play the scrims.`,
+            `:fire: **Noble Solos Server** :fire: \n\n- **0 PR** Requirements \n- Sessions with **DropMap **:map: \n- **No Zone Rules **\n- **Solo Stacked Sessions** - Practice and improve :dart:\n\nJoin the server and play now <:O_blopguns:925028152814743623> \n\nhttps://discord.gg/kdYegcYPDa :noble_solos:`,
+            `🔥 Do you want to play scrims with **Dropmaps** like **Tier 1 Pros**? 🔥\n\n<:div0:1311738375241470063> **Noble Division 0** hosts **daily** with dropmaps <:div0:1311738375241470063> \n\n- Gain access by **playing ONE game ** of scrims in <#917083097122615326> or <#905163647876206622> and verify!\n- Earn a promotion to **Division 3** by placing well! <:Noble_Division3:916436931712270448>\n- Practice in **Stacked Sessions** and improve 🎯\n\n<:attach:957216343466319922>https://discord.gg/Km6ngywx7f`
         ];
 
         function updatePresetHUD() {
+            const select = document.getElementById('presetSelect');
             const btn = document.getElementById('btnNextPreset');
             const progressBar = document.getElementById('presetProgressBar');
-            if (!btn || !progressBar) return;
-            btn.disabled = false;
-            btn.style.opacity = '1';
-            btn.className = 'btn btn-primary';
-            btn.innerHTML = '📋 Copy Preset';
-            progressBar.style.width = '100%';
-            progressBar.style.background = 'var(--success)';
-            const stepEl = document.getElementById('step-0');
-            if (stepEl) {
-                stepEl.classList.add('active-step');
-                stepEl.style.borderColor = 'var(--primary)';
-                stepEl.style.color = 'var(--primary)';
-                stepEl.innerHTML = '1';
+            if (!select || !btn || !progressBar) return;
+            const currentIndex = parseInt(select.value);
+
+            // Update button text
+            if (currentIndex === 0) {
+                btn.innerHTML = "🚀 Start Hosting Now (Game 1)";
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.className = 'btn btn-primary';
+            } else if (currentIndex < presetsList.length) {
+                btn.innerHTML = `⏭️ Next Preset (Game ${currentIndex + 1})`;
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.className = 'btn btn-primary';
+            } else {
+                btn.innerHTML = "✅ All Presets Sent";
+                btn.disabled = true;
+                btn.style.opacity = '0.7';
+                btn.className = 'btn btn-secondary';
+            }
+
+            // Update Progress Steps
+            const totalSteps = presetsList.length;
+            for (let i = 0; i < totalSteps; i++) {
+                const stepEl = document.getElementById(`step-${i}`);
+                if (stepEl) {
+                    stepEl.classList.remove('active-step', 'completed-step');
+                    if (i < currentIndex) {
+                        // Completed
+                        stepEl.classList.add('completed-step');
+                        stepEl.style.borderColor = 'var(--success)';
+                        stepEl.style.color = 'var(--success)';
+                        stepEl.innerHTML = '✓';
+                    } else if (i === currentIndex) {
+                        // Current
+                        stepEl.classList.add('active-step');
+                        stepEl.style.borderColor = 'var(--primary)';
+                        stepEl.style.color = 'var(--primary)';
+                        stepEl.innerHTML = (i + 1).toString();
+                    } else {
+                        // Pending
+                        stepEl.style.borderColor = 'var(--card-border)';
+                        stepEl.style.color = 'var(--text-dim)';
+                        stepEl.innerHTML = (i + 1).toString();
+                    }
+                }
+            }
+
+            // Update progress bar width
+            const progressPercentage = (currentIndex / (totalSteps - 1)) * 100;
+            progressBar.style.width = `${Math.min(progressPercentage, 100)}%`;
+            if (currentIndex >= totalSteps) {
+                progressBar.style.background = 'var(--success)';
+            } else {
+                progressBar.style.background = 'var(--primary)';
             }
         }
 
+        if (document.getElementById('presetSelect')) {
+            document.getElementById('presetSelect').addEventListener('change', (e) => {
+                updatePresetHUD();
+                saveState();
+                
+                const currentIndex = parseInt(e.target.value);
+                if (currentIndex > 0 && currentIndex <= presetsList.length) {
+                    const presetText = presetsList[currentIndex - 1];
+                    const output = document.getElementById('presetOutput');
+                    output.textContent = presetText;
+                    document.getElementById('presetOutputSection').style.display = 'block';
+                    
+                    navigator.clipboard.writeText(presetText).then(() => {
+                        showToast(`Preset ${currentIndex} copied to clipboard!`);
+                    });
+                } else {
+                    document.getElementById('presetOutputSection').style.display = 'none';
+                }
+            });
+        }
+
         function getNextPreset() {
-            const presetText = presetsList[0];
+            const select = document.getElementById('presetSelect');
+            let currentIndex = parseInt(select.value);
+
+            if (currentIndex >= presetsList.length) {
+                showToast("All presets have been sent!", "warning");
+                return;
+            }
+
+            const presetText = presetsList[currentIndex];
             const output = document.getElementById('presetOutput');
             output.textContent = presetText;
             document.getElementById('presetOutputSection').style.display = 'block';
 
+            currentIndex++;
+            select.value = currentIndex;
             updatePresetHUD();
+            saveState();
 
             navigator.clipboard.writeText(presetText).then(() => {
-                showToast('Preset copied to clipboard!');
+                showToast(`Preset ${currentIndex} copied to clipboard!`);
             });
+        }
+
+        function resetPresets() {
+            document.getElementById('presetSelect').value = 0;
+            document.getElementById('presetOutputSection').style.display = 'none';
+            updatePresetHUD();
+            saveState();
+            showToast("Presets sequence reset", "success");
         }
 
         const generalPresetsList = [
