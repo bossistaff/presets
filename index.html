@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord ID Pro | Advanced Manager</title>
+    <title>Discord Presets</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1416,6 +1416,49 @@
             return Math.floor(date.getTime() / 1000);
         }
 
+        function getRomeDateParts(referenceDate = new Date()) {
+            const formatter = new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Europe/Rome',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            const parts = formatter.formatToParts(referenceDate);
+            const dateParts = {};
+            parts.forEach((part) => {
+                if (part.type !== 'literal') {
+                    dateParts[part.type] = part.value;
+                }
+            });
+            return {
+                year: parseInt(dateParts.year, 10),
+                month: parseInt(dateParts.month, 10),
+                day: parseInt(dateParts.day, 10)
+            };
+        }
+
+                function getRomeOffsetMinutes(referenceDate) {
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Europe/Rome',
+                timeZoneName: 'shortOffset'
+            });
+            const parts = formatter.formatToParts(referenceDate);
+            const timeZonePart = parts.find((part) => part.type === 'timeZoneName');
+            const match = timeZonePart && timeZonePart.value.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
+            if (!match) return 120;
+            const sign = match[1] === '+' ? 1 : -1;
+            const hours = parseInt(match[2], 10);
+            const minutes = match[3] ? parseInt(match[3], 10) : 0;
+            return sign * (hours * 60 + minutes);
+        }
+
+        function buildRomeTimestamp(referenceDate, timeParts) {
+            const { year, month, day } = getRomeDateParts(referenceDate);
+            const assumedUtc = Date.UTC(year, month - 1, day, timeParts.hour, timeParts.minute, 0, 0);
+            const offsetMinutes = getRomeOffsetMinutes(new Date(assumedUtc));
+            return Math.floor((assumedUtc - offsetMinutes * 60000) / 1000);
+        }
+
         function getTomorrowSchedule(referenceDate = new Date()) {
             const tomorrow = new Date(referenceDate);
             tomorrow.setDate(tomorrow.getDate() + 1);
@@ -1625,7 +1668,22 @@
             const modeLabel = getModeLabel(mode);
             const timeParts = getModeScheduleParts(mode);
             const timeLabel = `${String(timeParts.hour).padStart(2, '0')}:${String(timeParts.minute).padStart(2, '0')}`;
-            scheduleValue.textContent = `${schedule.label === 'Weekend' ? 'Weekend' : 'Weekday'} • ${modeLabel}: ${timeLabel}`;
+            scheduleValue.textContent = `${schedule.label === 'Weekend' ? 'Weekend' : 'Weekday'}  ${modeLabel}: ${timeLabel} CEST`;
+        }
+
+                function getFirstMatchPresetText() {
+            const mode = getSelectedTimestampMode();
+            const todayTimestamp = buildRomeTimestamp(new Date(), getModeScheduleParts(mode));
+            return `<@&854727975550320650> \n\n<:ArrowRight:1398394460941062327> The **First Match** is @ <t:${todayTimestamp}:t> ~ <t:${todayTimestamp}:R>! \n\n� Please read the #scrim-rules before playing. :trophy: `;
+        }
+
+        function getScrimsConcludedPresetText() {
+            const mode = getSelectedTimestampMode();
+            const modeLabel = getModeLabel(mode);
+            const tomorrowDate = new Date();
+            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+            const tomorrowTimestamp = buildRomeTimestamp(tomorrowDate, getModeScheduleParts(mode, tomorrowDate));
+            return ` **The ${modeLabel} Scrims have __concluded__!**\n\n<:ArrowRight:1398394460941062327> Games will resume **at <t:${tomorrowTimestamp}:t>** :heartcartoon:\n\n� Make sure to invite your friends over, https://discord.gg/EU `;
         }
         loadState();
     </script>
