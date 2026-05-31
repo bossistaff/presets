@@ -779,10 +779,141 @@
             box-shadow: 0 0 10px var(--primary-glow);
         }
 
+        /* Timestamp Tools */
+        .timestamp-panel {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .timestamp-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+            transition: var(--transition);
+            min-height: 100%;
+        }
+
+        .timestamp-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(88, 101, 242, 0.35);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .timestamp-card h3 {
+            font-family: var(--font-heading);
+            font-size: 1.02rem;
+            margin-bottom: 0;
+        }
+
+        .timestamp-card p {
+            color: var(--text-dim);
+            font-size: 0.92rem;
+            line-height: 1.55;
+            margin-bottom: 0;
+        }
+
+        .timestamp-generator {
+            margin-top: 24px;
+            padding: 22px;
+            border-radius: 22px;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.035);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+        }
+
+        .timestamp-output-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .timestamp-output-item {
+            width: 100%;
+            text-align: left;
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            background: rgba(0, 0, 0, 0.22);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 0;
+        }
+
+        .timestamp-output-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(88, 101, 242, 0.16);
+        }
+
+        .timestamp-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        .timestamp-code {
+            display: block;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 0.95rem;
+            word-break: break-word;
+            line-height: 1.45;
+        }
+
+        .timestamp-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .timestamp-meta .stat-card {
+            flex: 1 1 140px;
+            margin-bottom: 0;
+        }
+
+        .timestamp-panel .btn {
+            width: 100%;
+            border-radius: 999px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+        }
+
+        .timestamp-panel .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        #page-timestamps .field-group label,
+        #page-timestamps .stat-label,
+        #page-timestamps .timestamp-label {
+            letter-spacing: 0.06em;
+        }
+
+        #timestampModeSelect,
+        #timestampDateTime {
+            min-height: 52px;
+        }
+
+        #page-timestamps .field-group select:focus,
+        #page-timestamps .field-group input:focus {
+            border-color: rgba(88, 101, 242, 0.6);
+            box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.12);
+        }
+
         /* Responsive */
         @media (max-width: 600px) {
             .container {
-                padding: 20px;
+                padding: 16px;
             }
 
             .nav-container {
@@ -813,6 +944,45 @@
             .btn-group button {
                 width: 100%;
             }
+
+            .timestamp-panel,
+            .timestamp-output-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timestamp-panel {
+                gap: 14px;
+            }
+
+            .timestamp-generator {
+                padding: 16px;
+                border-radius: 18px;
+            }
+
+            .timestamp-card,
+            .timestamp-output-item {
+                padding: 15px;
+                border-radius: 14px;
+            }
+
+            .timestamp-meta {
+                gap: 10px;
+            }
+
+            .timestamp-meta .stat-card {
+                flex-basis: 100%;
+            }
+
+            #timestampModeSelect,
+            #timestampDateTime {
+                padding: 14px !important;
+                font-size: 0.98rem !important;
+            }
+
+            .timestamp-output-item,
+            .timestamp-card {
+                transform: none;
+            }
         }
     </style>
 </head>
@@ -824,7 +994,8 @@
 
 
     <div class="nav-container">
-        <button class="nav-item active" onclick="switchPage('presets')">Presets</button>
+        <button class="nav-item active" data-page="presets" onclick="switchPage('presets')">Presets</button>
+        <button class="nav-item" data-page="timestamps" onclick="switchPage('timestamps')">TimeStamps</button>
         <button class="nav-item" id="themeToggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode"
             style="margin-left: auto;">☀️</button>
     </div>
@@ -951,6 +1122,93 @@
                 </div>
             </div>
         </div>
+
+        <!-- PAGE: TIMESTAMPS -->
+        <div id="page-timestamps" class="page">
+            <h1>TimeStamps</h1>
+            <p class="subtitle">Quick-copy the useful timestamp presets, or generate a fresh one below.</p>
+
+            <div class="field-group">
+                <label for="timestampModeSelect">Mode</label>
+                <select id="timestampModeSelect" onchange="updateTimestampScheduleNotice()"
+                    style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.3); color: var(--text-main); font-family: var(--font-main); outline: none; font-size: 1rem; cursor: pointer; transition: var(--transition);">
+                    <option value="solo">Solo</option>
+                    <option value="duo">Duo</option>
+                    <option value="trio">Trio</option>
+                </select>
+            </div>
+
+            <div class="stat-card" style="margin-bottom: 20px; text-align: left;">
+                <span class="stat-label">Today's schedule</span>
+                <span class="stat-value" id="timestampScheduleValue" style="font-size: 1.05rem;">Loading...</span>
+            </div>
+
+            <div class="timestamp-panel">
+                <div class="timestamp-card" onclick="copyGeneralPreset(0)" role="button" tabindex="0">
+                    <h3>First Match</h3>
+                    <p>Copy the ready-made first match announcement.</p>
+                    <div class="btn btn-primary" style="padding: 12px 14px; width: 100%; justify-content: center;">Copy Preset</div>
+                </div>
+                <div class="timestamp-card" onclick="copyGeneralPreset(1)" role="button" tabindex="0">
+                    <h3>Scrims Concluded</h3>
+                    <p>Copy the conclusion message with timestamp formatting.</p>
+                    <div class="btn btn-primary" style="padding: 12px 14px; width: 100%; justify-content: center;">Copy Preset</div>
+                </div>
+            </div>
+
+            <div class="timestamp-generator">
+                <div class="field-group" style="margin-bottom: 16px;">
+                    <label for="timestampDateTime">Generator</label>
+                    <input id="timestampDateTime" type="datetime-local"
+                        style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.3); color: var(--text-main); font-family: var(--font-main); outline: none; font-size: 1rem; transition: var(--transition);">
+                </div>
+
+                <div class="btn-group" style="margin-top: 0;">
+                    <button class="btn btn-primary" onclick="setTimestampNow()">Now</button>
+                    <button class="btn btn-secondary" onclick="shiftTimestampMinutes(15)">+15m</button>
+                    <button class="btn btn-secondary" onclick="shiftTimestampMinutes(60)">+1h</button>
+                    <button class="btn btn-secondary" onclick="copyTimestampPack()">Copy All</button>
+                </div>
+
+                <div class="timestamp-meta">
+                    <div class="stat-card">
+                        <span class="stat-value" id="timestampUnixValue">-</span>
+                        <span class="stat-label">Unix</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="timestampPreviewValue">-</span>
+                        <span class="stat-label">Local Preview</span>
+                    </div>
+                </div>
+
+                <div class="timestamp-output-grid">
+                    <button class="timestamp-output-item" onclick="copyTimestampFormat('t', 'Short time')">
+                        <span class="timestamp-label">Short Time</span>
+                        <span class="timestamp-code" id="timestampShort">-</span>
+                    </button>
+                    <button class="timestamp-output-item" onclick="copyTimestampFormat('T', 'Long time')">
+                        <span class="timestamp-label">Long Time</span>
+                        <span class="timestamp-code" id="timestampLongTime">-</span>
+                    </button>
+                    <button class="timestamp-output-item" onclick="copyTimestampFormat('D', 'Date only')">
+                        <span class="timestamp-label">Date Only</span>
+                        <span class="timestamp-code" id="timestampDateOnly">-</span>
+                    </button>
+                    <button class="timestamp-output-item" onclick="copyTimestampFormat('F', 'Full date')">
+                        <span class="timestamp-label">Full Date</span>
+                        <span class="timestamp-code" id="timestampFull">-</span>
+                    </button>
+                    <button class="timestamp-output-item" onclick="copyTimestampFormat('R', 'Relative time')">
+                        <span class="timestamp-label">Relative</span>
+                        <span class="timestamp-code" id="timestampRelative">-</span>
+                    </button>
+                    <button class="timestamp-output-item" onclick="copyTimestampFormat('f', 'Long date + time')">
+                        <span class="timestamp-label">Long Date + Time</span>
+                        <span class="timestamp-code" id="timestampLongDateTime">-</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Toast Notifications -->
@@ -977,12 +1235,18 @@
             try {
                 const saved = JSON.parse(localStorage.getItem('admin_ids_state_presets_only'));
                 if (saved) {
+                    if (saved.activePage) {
+                        state.activePage = saved.activePage;
+                    }
                     if (saved.presetIndex !== undefined && document.getElementById('presetSelect')) {
                         document.getElementById('presetSelect').value = saved.presetIndex;
                         if (typeof updatePresetHUD === 'function') updatePresetHUD();
                     }
                 }
             } catch (e) { }
+            switchPage(state.activePage || 'presets', true);
+            initTimestampGenerator();
+            updateTimestampScheduleNotice();
         }
 
         function showToast(message, type = 'success') {
@@ -1009,9 +1273,197 @@
             localStorage.setItem('admin_ids_theme', isLight ? 'light' : 'dark');
         }
 
-        function switchPage(pageId) {
-            saveState();
+        function switchPage(pageId, skipSave = false) {
+            document.querySelectorAll('.page').forEach((pageEl) => {
+                pageEl.classList.remove('active');
+            });
+            const activePageEl = document.getElementById(`page-${pageId}`);
+            if (activePageEl) {
+                activePageEl.classList.add('active');
+            }
+            document.querySelectorAll('.nav-item[data-page]').forEach((navItem) => {
+                navItem.classList.toggle('active', navItem.dataset.page === pageId);
+            });
+            state.activePage = pageId;
+            if (!skipSave) {
+                saveState();
+            }
         }
+
+        function formatLocalDateTime(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        function getTimestampUnix() {
+            const input = document.getElementById('timestampDateTime');
+            if (!input || !input.value) {
+                return Math.floor(Date.now() / 1000);
+            }
+            return Math.floor(new Date(input.value).getTime() / 1000);
+        }
+
+        function updateTimestampPreview() {
+            const input = document.getElementById('timestampDateTime');
+            if (!input) return;
+            const unix = getTimestampUnix();
+            const baseDate = new Date(unix * 1000);
+            const previewText = baseDate.toLocaleString([], {
+                weekday: 'short',
+                day: '2-digit',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const mappings = [
+                ['timestampUnixValue', String(unix)],
+                ['timestampPreviewValue', previewText],
+                ['timestampShort', `<t:${unix}:t>`],
+                ['timestampLongTime', `<t:${unix}:T>`],
+                ['timestampDateOnly', `<t:${unix}:D>`],
+                ['timestampFull', `<t:${unix}:F>`],
+                ['timestampRelative', `<t:${unix}:R>`],
+                ['timestampLongDateTime', `<t:${unix}:f>`]
+            ];
+
+            mappings.forEach(([id, value]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.textContent = value;
+                }
+            });
+        }
+
+        function initTimestampGenerator() {
+            const input = document.getElementById('timestampDateTime');
+            if (!input) return;
+            if (!input.value) {
+                input.value = formatLocalDateTime(new Date());
+            }
+            input.addEventListener('change', updateTimestampPreview);
+            input.addEventListener('input', updateTimestampPreview);
+            updateTimestampPreview();
+        }
+
+        function setTimestampNow() {
+            const input = document.getElementById('timestampDateTime');
+            if (!input) return;
+            input.value = formatLocalDateTime(new Date());
+            updateTimestampPreview();
+            showToast('Set to current time');
+        }
+
+        function shiftTimestampMinutes(minutes) {
+            const input = document.getElementById('timestampDateTime');
+            if (!input) return;
+            const currentValue = input.value ? new Date(input.value) : new Date();
+            currentValue.setMinutes(currentValue.getMinutes() + minutes);
+            input.value = formatLocalDateTime(currentValue);
+            updateTimestampPreview();
+            showToast(`Shifted by ${minutes} minutes`);
+        }
+
+        function copyTimestampFormat(format, label) {
+            const unix = getTimestampUnix();
+            const timestampText = `<t:${unix}:${format}>`;
+            navigator.clipboard.writeText(timestampText).then(() => {
+                showToast(`${label} copied to clipboard!`);
+            });
+        }
+
+        function copyTimestampPack() {
+            const unix = getTimestampUnix();
+            const bundle = [
+                `Short Time: <t:${unix}:t>`,
+                `Long Time: <t:${unix}:T>`,
+                `Date Only: <t:${unix}:D>`,
+                `Full Date: <t:${unix}:F>`,
+                `Relative: <t:${unix}:R>`
+            ].join('\n');
+            navigator.clipboard.writeText(bundle).then(() => {
+                showToast('Timestamp pack copied to clipboard!');
+            });
+        }
+
+        function getDailyScrimSchedule(referenceDate = new Date()) {
+            const dayIndex = referenceDate.getDay();
+            const isWeekend = dayIndex === 0 || dayIndex === 6;
+            if (isWeekend) {
+                return {
+                    label: 'Weekend',
+                    solo: { hour: 13, minute: 0 },
+                    duo: { hour: 13, minute: 10 },
+                    trio: { hour: 13, minute: 20 }
+                };
+            }
+
+            return {
+                label: 'Monday to Friday',
+                solo: { hour: 14, minute: 30 },
+                duo: { hour: 14, minute: 40 },
+                trio: { hour: 14, minute: 50 }
+            };
+        }
+
+        function buildTimestampForDate(referenceDate, timeParts) {
+            const date = new Date(referenceDate);
+            date.setHours(timeParts.hour, timeParts.minute, 0, 0);
+            return Math.floor(date.getTime() / 1000);
+        }
+
+        function getTomorrowSchedule(referenceDate = new Date()) {
+            const tomorrow = new Date(referenceDate);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            return {
+                date: tomorrow,
+                schedule: getDailyScrimSchedule(tomorrow)
+            };
+        }
+
+        function getSelectedTimestampMode() {
+            const modeSelect = document.getElementById('timestampModeSelect');
+            return modeSelect ? modeSelect.value : 'solo';
+        }
+
+        function getModeLabel(mode) {
+            if (mode === 'duo') return 'Duo';
+            if (mode === 'trio') return 'Trio';
+            return 'Solo';
+        }
+
+        function getModeScheduleParts(mode, referenceDate = new Date()) {
+            const dailySchedule = getDailyScrimSchedule(referenceDate);
+            if (mode === 'duo') return dailySchedule.duo;
+            if (mode === 'trio') return dailySchedule.trio;
+            return dailySchedule.solo;
+        }
+
+        function getModeTimestamp(mode, referenceDate = new Date()) {
+            return buildTimestampForDate(referenceDate, getModeScheduleParts(mode, referenceDate));
+        }
+
+        function getFirstMatchPresetText() {
+            const mode = getSelectedTimestampMode();
+            const todayTimestamp = getModeTimestamp(mode, new Date());
+
+            return `<@&854727975550320650> \n\n<:ArrowRight:1398394460941062327> The **First Match** is @ <t:${todayTimestamp}:t> ~ <t:${todayTimestamp}:R>! \n\n• Please read the #scrim-rules before playing. :trophy: `;
+        }
+
+        function getScrimsConcludedPresetText() {
+            const mode = getSelectedTimestampMode();
+            const modeLabel = getModeLabel(mode);
+            const tomorrowInfo = getTomorrowSchedule(new Date());
+            const tomorrowDate = tomorrowInfo.date;
+            const tomorrowTimestamp = getModeTimestamp(mode, tomorrowDate);
+
+            return ` **The ${modeLabel} Scrims have __concluded__!**\n\n<:ArrowRight:1398394460941062327> Games will resume **at <t:${tomorrowTimestamp}:t>** :heartcartoon:\n\n• Make sure to invite your friends over, https://discord.gg/EU `;
+        }
+
         const presetsList = [
             ` <:ArrowRight:1398394460941062327> Make sure to download [Yunite Client](<https://yunite.xyz/client>) so your points count on the Leaderboard!\n:attach: <https://nobleprac.com/leaderboards> \n`,
             `## :trophy: **Scrims Champion Event** :trophy:\n\n**Top 10 players** with the **most scrim wins in May** will earn the exclusive @Scrims Champion role. :crown:\n\n:date: May 1 – May 31, 2026\n\n- Every scrim win counts \n- Ties decided by average placement  :dart: \n\n:point_right: Exclusive role, never obtainable again.`,
@@ -1137,8 +1589,8 @@
         }
 
         const generalPresetsList = [
-            `<@&854727975550320650> \n\n<:ArrowRight:1398394460941062327> The **First Match** is @ <> ~ <>!\n\n• Please read the #scrim-rules before playing. :trophy: `,
-            ` **The [] Scrims have __concluded__!**\n\n<:ArrowRight:1398394460941062327> Games will resume **at <t:1729513800:t>** :heartcartoon:\n\n• Make sure to invite your friends over, https://discord.gg/EU `,
+            () => getFirstMatchPresetText(),
+            () => getScrimsConcludedPresetText(),
             `Game cancelled due to __no host__.\n\n<:ArrowRight:1398394460941062327> If you have the Creator Code apply to become a host :A_arrow: #host-application`,
             `<:ArrowRight:1398394460941062327> We are looking for a host for this game. If you have a creator code, please DM me with proof of having the start button. If we don't have a host after 8 minutes, we will cancel this game.`,
             ` \n<:ArrowRight:1398394460941062327> The key has been dispatched ~ Check your DMs __by **Yunite**__. <:YuniteBot:957327953761538048>\n-#  Missed queue? Click ✋ above to sign up late.`,
@@ -1146,7 +1598,8 @@
         ];
 
         function copyGeneralPreset(index) {
-            const presetText = generalPresetsList[index];
+            const presetSource = generalPresetsList[index];
+            const presetText = typeof presetSource === 'function' ? presetSource() : presetSource;
             navigator.clipboard.writeText(presetText).then(() => {
                 showToast("General Preset copied to clipboard!", "success");
                 
@@ -1162,6 +1615,17 @@
                     }, 1000);
                 }
             });
+        }
+
+        function updateTimestampScheduleNotice() {
+            const scheduleValue = document.getElementById('timestampScheduleValue');
+            if (!scheduleValue) return;
+            const mode = getSelectedTimestampMode();
+            const schedule = getDailyScrimSchedule();
+            const modeLabel = getModeLabel(mode);
+            const timeParts = getModeScheduleParts(mode);
+            const timeLabel = `${String(timeParts.hour).padStart(2, '0')}:${String(timeParts.minute).padStart(2, '0')}`;
+            scheduleValue.textContent = `${schedule.label === 'Weekend' ? 'Weekend' : 'Weekday'} • ${modeLabel}: ${timeLabel}`;
         }
         loadState();
     </script>
