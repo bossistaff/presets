@@ -1674,7 +1674,7 @@
                 function getFirstMatchPresetText() {
             const mode = getSelectedTimestampMode();
             const todayTimestamp = buildRomeTimestamp(new Date(), getModeScheduleParts(mode));
-            return `<@&854727975550320650> \n\n<:ArrowRight:1398394460941062327> The **First Match** is @ <t:${todayTimestamp}:t> ~ <t:${todayTimestamp}:R>! \n\n� Please read the #scrim-rules before playing. :trophy: `;
+            return `<@&854727975550320650> \n\n<:ArrowRight:1398394460941062327> The **First Match** is @ <t:${todayTimestamp}:t> ~ <t:${todayTimestamp}:R>! \n\n• Please read the #scrim-rules before playing. :trophy: `;
         }
 
         function getScrimsConcludedPresetText() {
@@ -1683,7 +1683,7 @@
             const tomorrowDate = new Date();
             tomorrowDate.setDate(tomorrowDate.getDate() + 1);
             const tomorrowTimestamp = buildRomeTimestamp(tomorrowDate, getModeScheduleParts(mode, tomorrowDate));
-            return ` **The ${modeLabel} Scrims have __concluded__!**\n\n<:ArrowRight:1398394460941062327> Games will resume **at <t:${tomorrowTimestamp}:t>** :heartcartoon:\n\n� Make sure to invite your friends over, https://discord.gg/EU `;
+            return ` **The ${modeLabel} Scrims have __concluded__!**\n\n<:ArrowRight:1398394460941062327> Games will resume **at <t:${tomorrowTimestamp}:t>** :heartcartoon:\n\n• Make sure to invite your friends over, https://discord.gg/EU `;
         }
         loadState();
     </script>
