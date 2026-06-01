@@ -1031,9 +1031,6 @@
                 <div class="preset-step" id="step-4"
                     style="z-index: 2; background: var(--bg-dark); padding: 0 10px; color: var(--text-dim); font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card-border);">
                     5</div>
-                <div class="preset-step" id="step-5"
-                    style="z-index: 2; background: var(--bg-dark); padding: 0 10px; color: var(--text-dim); font-weight: bold; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card-border);">
-                    6</div>
             </div>
 
             <div class="field-group">
@@ -1041,11 +1038,11 @@
                 <select id="presetSelect"
                     style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.3); color: var(--text-main); font-family: var(--font-main); outline: none; font-size: 1rem; cursor: pointer; transition: var(--transition);">
                     <option value="0">Ready to start (Next: LB Preset)</option>
-                    <option value="1">LB Preset (Next: Event preset #2)</option>
-                    <option value="2">Event preset #2 (Next: Patreon Preset #3)</option>
-                    <option value="3">Patreon Preset #3 (Next: Friends Invite Preset #4)</option>
-                    <option value="4">Friends Invite Preset #4 (Next: Noble Solos Preset #5)</option>
-                    <option value="5">Noble Solos Preset #5 (Next: Division 0 Preset #6)</option>
+                    <option value="1">LB Preset (Next: Patreon Preset #2)</option>
+                    <option value="2">Patreon Preset #2 (Next: Friends Invite Preset #3)</option>
+                    <option value="3">Friends Invite Preset #3 (Next: Noble Solos Preset #4)</option>
+                    <option value="4">Noble Solos Preset #4 (Next: Division 0 Preset #5)</option>
+                    <option value="5">Division 0 Preset #5</option>
                     <option value="6">✅ All presets finished</option>
                 </select>
             </div>
@@ -1516,6 +1513,8 @@
             `🔥 Do you want to play scrims with **Dropmaps** like **Tier 1 Pros**? 🔥\n\n<:div0:1311738375241470063> **Noble Division 0** hosts **daily** with dropmaps <:div0:1311738375241470063> \n\n- Gain access by **playing ONE game ** of scrims in <#917083097122615326> or <#905163647876206622> and verify!\n- Earn a promotion to **Division 3** by placing well! <:Noble_Division3:916436931712270448>\n- Practice in **Stacked Sessions** and improve 🎯\n\n<:attach:957216343466319922>https://discord.gg/Km6ngywx7f`
         ];
 
+        const orderedPresetsList = presetsList.filter((_, index) => index !== 1);
+
         function updatePresetHUD() {
             const select = document.getElementById('presetSelect');
             const btn = document.getElementById('btnNextPreset');
@@ -1529,7 +1528,7 @@
                 btn.disabled = false;
                 btn.style.opacity = '1';
                 btn.className = 'btn btn-primary';
-            } else if (currentIndex < presetsList.length) {
+            } else if (currentIndex < orderedPresetsList.length) {
                 btn.innerHTML = `⏭️ Next Preset (Game ${currentIndex + 1})`;
                 btn.disabled = false;
                 btn.style.opacity = '1';
@@ -1542,7 +1541,7 @@
             }
 
             // Update Progress Steps
-            const totalSteps = presetsList.length;
+            const totalSteps = orderedPresetsList.length;
             for (let i = 0; i < totalSteps; i++) {
                 const stepEl = document.getElementById(`step-${i}`);
                 if (stepEl) {
@@ -1584,8 +1583,8 @@
                 saveState();
                 
                 const currentIndex = parseInt(e.target.value);
-                if (currentIndex > 0 && currentIndex <= presetsList.length) {
-                    const presetText = presetsList[currentIndex - 1];
+                if (currentIndex > 0 && currentIndex <= orderedPresetsList.length) {
+                    const presetText = orderedPresetsList[currentIndex - 1];
                     const output = document.getElementById('presetOutput');
                     output.textContent = presetText;
                     document.getElementById('presetOutputSection').style.display = 'block';
@@ -1603,12 +1602,12 @@
             const select = document.getElementById('presetSelect');
             let currentIndex = parseInt(select.value);
 
-            if (currentIndex >= presetsList.length) {
+            if (currentIndex >= orderedPresetsList.length) {
                 showToast("All presets have been sent!", "warning");
                 return;
             }
 
-            const presetText = presetsList[currentIndex];
+            const presetText = orderedPresetsList[currentIndex];
             const output = document.getElementById('presetOutput');
             output.textContent = presetText;
             document.getElementById('presetOutputSection').style.display = 'block';
