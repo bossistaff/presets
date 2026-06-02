@@ -1456,6 +1456,38 @@
             return Math.floor((assumedUtc - offsetMinutes * 60000) / 1000);
         }
 
+        function getRomeDateTimeParts(referenceDate = new Date()) {
+            const formatter = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Europe/Rome',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            const parts = formatter.formatToParts(referenceDate);
+            const dateParts = {};
+            parts.forEach((part) => {
+                if (part.type !== 'literal') {
+                    dateParts[part.type] = part.value;
+                }
+            });
+            return {
+                year: parseInt(dateParts.year, 10),
+                month: parseInt(dateParts.month, 10),
+                day: parseInt(dateParts.day, 10),
+                hour: parseInt(dateParts.hour, 10),
+                minute: parseInt(dateParts.minute, 10)
+            };
+        }
+
+        function getRomeDateForScrims(referenceDate = new Date()) {
+            const romeParts = getRomeDateTimeParts(referenceDate);
+            const dayOffset = romeParts.hour < 5 ? 0 : 1;
+            return new Date(Date.UTC(romeParts.year, romeParts.month - 1, romeParts.day + dayOffset, 12, 0, 0));
+        }
+
         function getTomorrowSchedule(referenceDate = new Date()) {
             const tomorrow = new Date(referenceDate);
             tomorrow.setDate(tomorrow.getDate() + 1);
@@ -1497,11 +1529,10 @@
         function getScrimsConcludedPresetText() {
             const mode = getSelectedTimestampMode();
             const modeLabel = getModeLabel(mode);
-            const tomorrowInfo = getTomorrowSchedule(new Date());
-            const tomorrowDate = tomorrowInfo.date;
-            const tomorrowTimestamp = getModeTimestamp(mode, tomorrowDate);
+            const resumeDate = getRomeDateForScrims(new Date());
+            const resumeTimestamp = buildRomeTimestamp(resumeDate, getModeScheduleParts(mode, resumeDate));
 
-            return ` **The ${modeLabel} Scrims have __concluded__!**\n\n<:ArrowRight:1398394460941062327> Games will resume **at <t:${tomorrowTimestamp}:t>** :heartcartoon:\n\n• Make sure to invite your friends over, https://discord.gg/EU `;
+            return ` **The ${modeLabel} Scrims have __concluded__!**\n\n<:ArrowRight:1398394460941062327> Games will resume **at <t:${resumeTimestamp}:t>** :heartcartoon:\n\n• Make sure to invite your friends over, https://discord.gg/EU `;
         }
 
         const presetsList = [
@@ -1679,10 +1710,9 @@
         function getScrimsConcludedPresetText() {
             const mode = getSelectedTimestampMode();
             const modeLabel = getModeLabel(mode);
-            const tomorrowDate = new Date();
-            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-            const tomorrowTimestamp = buildRomeTimestamp(tomorrowDate, getModeScheduleParts(mode, tomorrowDate));
-            return ` **The ${modeLabel} Scrims have __concluded__!**\n\n<:ArrowRight:1398394460941062327> Games will resume **at <t:${tomorrowTimestamp}:t>** :heartcartoon:\n\n• Make sure to invite your friends over, https://discord.gg/EU `;
+            const resumeDate = getRomeDateForScrims(new Date());
+            const resumeTimestamp = buildRomeTimestamp(resumeDate, getModeScheduleParts(mode, resumeDate));
+            return ` **The ${modeLabel} Scrims have __concluded__!**\n\n<:ArrowRight:1398394460941062327> Games will resume **at <t:${resumeTimestamp}:t>** :heartcartoon:\n\n• Make sure to invite your friends over, https://discord.gg/EU `;
         }
         loadState();
     </script>
