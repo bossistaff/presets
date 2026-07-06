@@ -1388,22 +1388,11 @@
         }
 
         function getDailyScrimSchedule(referenceDate = new Date()) {
-            const dayIndex = referenceDate.getDay();
-            const isWeekend = dayIndex === 0 || dayIndex === 6;
-            if (isWeekend) {
-                return {
-                    label: 'Weekend',
-                    solo: { hour: 13, minute: 0 },
-                    duo: { hour: 13, minute: 10 },
-                    trio: { hour: 13, minute: 20 }
-                };
-            }
-
             return {
-                label: 'Monday to Friday',
-                solo: { hour: 14, minute: 30 },
-                duo: { hour: 14, minute: 40 },
-                trio: { hour: 14, minute: 50 }
+                label: 'Daily Schedule',
+                solo: { hour: 13, minute: 0 },
+                duo: { hour: 13, minute: 10 },
+                trio: { hour: 13, minute: 20 }
             };
         }
 
@@ -1698,7 +1687,7 @@
             const modeLabel = getModeLabel(mode);
             const timeParts = getModeScheduleParts(mode);
             const timeLabel = `${String(timeParts.hour).padStart(2, '0')}:${String(timeParts.minute).padStart(2, '0')}`;
-            scheduleValue.textContent = `${schedule.label === 'Weekend' ? 'Weekend' : 'Weekday'}  ${modeLabel}: ${timeLabel} CEST`;
+            scheduleValue.textContent = `Daily ${modeLabel}: ${timeLabel} CEST`;
         }
 
                 function getFirstMatchPresetText() {
